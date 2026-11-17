@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uttarakhand Police - S4C Official 10-Level Architectural Plan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+      overflow: hidden;
+      background: #060913;
+      color: #f8fafc;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-ui {
+      background: rgba(10, 15, 29, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+    }
+    /* Sleek In-Scene 3D Callout Badges */
+    .room-tag-3d {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      white-space: nowrap;
+      z-index: 25;
+    }
+    .room-tag-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .room-tag-pin {
+      width: 2px;
+      height: 18px;
+      background: linear-gradient(180deg, #f59e0b, transparent);
+      margin: 0 auto;
+    }
+    .room-tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+      margin: -2px auto 0;
+    }
+    .hazard-stripe {
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 10px,
+        #0f172a 10px,
+        #0f172a 20px
+      );
+    }
+    /* Horizontal Scrollbar hide */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .timer-ring-fill {
+      transition: width 0.1s linear;
+    }
+    .badge-pop {
+      animation: badgePop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes badgePop {
+      0% { opacity: 0; transform: translate(-50%, -85%) scale(0.9); }
+      100% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+    }
+
+    /* Pie-Chart / CAD Architectural Leader Line Callout */
+    #leader-line-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 24;
+    }
+    .callout-line {
+      stroke: #f59e0b;
+      stroke-width: 2.2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
+    }
+    .callout-line-secondary {
+      stroke: #64748b;
+      stroke-width: 1.2;
+      stroke-dasharray: 4 3;
+      fill: none;
+      opacity: 0.55;
+    }
+    .callout-card {
+      position: absolute;
+      pointer-events: none;
+      z-index: 25;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative bg-slate-950 text-slate-100 overflow-hidden">
+
+  <header class="absolute top-0 left-0 right-0 z-30 p-2.5 md:p-3 flex items-center justify-between pointer-events-none">
+    <div class="flex items-center space-x-2.5 pointer-events-auto">
+      <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/25 border border-amber-300">
+        <i class="fa-solid fa-shield-halved text-slate-950 text-sm"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="text-[9px] font-mono-code font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-950/90 border border-amber-500/40 text-amber-300">
+            UTTARAKHAND POLICE - S4C
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10-Floor Quick Nav Bar -->
+    <div class="pointer-events-auto flex items-center space-x-1 glass-ui p-1 rounded-xl shadow-2xl overflow-x-auto max-w-[62vw] no-scrollbar hidden">
+      <button onclick="setFloorStage(0)" id="btn-0" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">B: Core Infra</button>
+      <button onclick="setFloorStage(1)" id="btn-1" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">G: Stilt/MT</button>
+      <button onclick="setFloorStage(2)" id="btn-2" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">1F: ERSS 112</button>
+      <button onclick="setFloorStage(3)" id="btn-3" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">2F: SCRB/CCTNS</button>
+      <button onclick="setFloorStage(4)" id="btn-4" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">3F: AI & FRS</button>
+      <button onclick="setFloorStage(5)" id="btn-5" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">4F: Threat Intel</button>
+      <button onclick="setFloorStage(6)" id="btn-6" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">5F: Investigation</button>
+      <button onclick="setFloorStage(7)" id="btn-7" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">6F: DC & NOC</button>
+      <button onclick="setFloorStage(8)" id="btn-8" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">7F: Directorate</button>
+      <button onclick="setFloorStage(9)" id="btn-9" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">8F: Training & R&D</button>
+      <button onclick="setFloorStage(10)" id="btn-10" class="stage-btn px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:bg-slate-800 transition whitespace-nowrap">Terrace</button>
+    </div>
+
+    <!-- Construction & View Tools -->
+    <div class="pointer-events-auto flex items-center space-x-1.5">
+      <button onclick="toggleScaffolding()" id="scaffold-btn" class="glass-ui hover:bg-slate-800 text-amber-400 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1" title="Toggle Scaffolding">
+        <i class="fa-solid fa-cubes-stacked"></i>
+        <span class="hidden md:inline">Scaffold</span>
+      </button>
+      <button onclick="toggleExplode()" id="explode-btn" class="glass-ui hover:bg-slate-800 text-cyan-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1" title="Exploded Architecture">
+        <i class="fa-solid fa-layer-group"></i>
+        <span class="hidden md:inline">Explode</span>
+      </button>
+      <button onclick="resetView()" class="glass-ui hover:bg-slate-800 text-slate-300 p-2 rounded-lg text-xs transition" title="Reset Camera">
+        <i class="fa-solid fa-arrows-rotate"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sleek Top-Left Floor HUD Card -->
+  <div id="floor-hud-banner" class="absolute top-14 left-3 md:left-4 z-20 pointer-events-none transition-all duration-300 hidden">
+    <div class="glass-ui px-3 py-1.5 rounded-xl border border-amber-500/30 shadow-lg flex items-center gap-2.5 bg-slate-950/85 backdrop-blur-md">
+      <div id="floor-badge-number" class="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-mono-code font-black text-xs shadow-md shadow-amber-500/20">
+        B
+      </div>
+      <div class="text-left">
+        <div class="flex items-center gap-1.5">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="floor-badge-level" class="text-[9px] font-mono-code font-bold text-amber-400 tracking-wider uppercase">
+            ACTIVE FLOOR: BASEMENT
+          </span>
+        </div>
+        <div id="floor-badge-name" class="text-xs font-bold text-slate-100 tracking-wide max-w-[260px] sm:max-w-xs md:max-w-sm truncate">
+          PARKING, CORE INFRASTRUCTURE
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="brand-splash" class="absolute inset-0 z-40 flex items-center justify-center bg-[radial-gradient(circle_at_center,_rgba(15,23,42,0.9),_rgba(2,6,23,0.98)_55%,_rgba(2,6,23,1)_100%)] backdrop-blur-md transition-opacity duration-1000">
+    <div class="relative text-center px-6">
+      <div class="absolute inset-x-0 -top-12 h-32 bg-gradient-to-r from-transparent via-amber-300/15 to-transparent blur-3xl"></div>
+
+      <div class="text-[30px] font-bold tracking-[0.08em] text-sky-300 uppercase mb-4" style="font-family: Verdana, sans-serif;">Uttarakhand Police</div>
+
+      <div class="mt-10 flex items-center justify-center gap-4 text-slate-300">
+        <div class="text-[9px] md:text-[11px] font-mono-code tracking-[0.38em] uppercase text-slate-400">Prepared by</div>
+        <div class="flex items-center justify-center rounded-xl border border-amber-300/40 bg-slate-900/80 px-4 py-2.5 shadow-[0_0_30px_rgba(250,204,21,0.12)]">
+          <span class="font-black text-[28px] md:text-[34px] leading-none tracking-[-0.12em] text-amber-300">E</span>
+          <span class="font-black text-[28px] md:text-[34px] leading-none tracking-[-0.12em] text-white">Y</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D Canvas Viewport -->
+  <div id="canvas-container" class="absolute inset-0 z-0 cursor-grab active:cursor-grabbing"></div>
+
+  <!-- In-Scene 3D Projected Labels Overlay -->
+  <div id="labels-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden"></div>
+
+  <!-- Pie-Chart Style Architectural Leader Line Overlay -->
+  <svg id="leader-line-svg">
+    <g id="all-floors-lines-group"></g>
+    <circle id="callout-anchor-pulse" r="8" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0"></circle>
+    <circle id="callout-anchor-dot" r="4.5" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5" opacity="0"></circle>
+    <path id="callout-leader-path" class="callout-line" d=""></path>
+  </svg>
+
+  <!-- Attached Floor Name Callout Badge (Pie-Chart Style) -->
+  <div id="leader-card" class="callout-card hidden">
+    <div class="glass-ui px-3.5 py-2.5 rounded-xl border border-amber-400/60 shadow-2xl bg-slate-950/95 backdrop-blur-md flex items-center gap-3">
+      <div id="leader-level-badge" class="px-2 py-1 rounded-md bg-amber-500 text-slate-950 font-mono-code font-black text-xs shadow-md shadow-amber-500/30">
+        B
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="leader-level-title" class="text-[10px] font-mono-code font-extrabold text-amber-400 tracking-wider uppercase">
+            BASEMENT
+          </span>
+        </div>
+        <div id="leader-unit-subtitle" class="text-xs font-bold text-slate-100 tracking-wide">
+          PARKING, CORE INFRASTRUCTURE
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="absolute bottom-3 right-3 z-30 pointer-events-auto w-[220px]">
+    <div class="glass-ui p-2.5 rounded-2xl shadow-2xl flex flex-col gap-2">
+      
+      <!-- Construction Progress Hazard Line -->
+      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden flex items-center">
+        <div id="construction-progress-bar" class="h-full hazard-stripe transition-all duration-700 w-0"></div>
+      </div>
+
+      <!-- 5-Second Floor Dwell Countdown Indicator (Active during Tour) -->
+      <div id="tour-timer-container" class="w-full bg-slate-900/90 h-1 rounded-full overflow-hidden hidden">
+        <div id="tour-timer-bar" class="h-full bg-gradient-to-r from-amber-500 via-yellow-400 to-cyan-400 timer-ring-fill w-0"></div>
+      </div>
+
+      <!-- Controls: Prev / Play / Next -->
+      <div class="flex items-center justify-between gap-1.5">
+        <button onclick="prevFloor()" class="w-8 h-8 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Previous Floor">
+          <i class="fa-solid fa-backward-step text-xs"></i>
+        </button>
+        
+        <button id="play-btn" onclick="togglePlay()" class="flex-1 h-8 rounded-md bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold flex items-center justify-center space-x-1 shadow-md transition text-xs">
+          <i id="play-icon" class="fa-solid fa-play text-[10px]"></i>
+          <span id="play-text">Play Tour</span>
+        </button>
+
+        <button onclick="nextFloor()" class="w-8 h-8 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Next Floor">
+          <i class="fa-solid fa-forward-step text-xs"></i>
+        </button>
+      </div>
+
+      <!-- 5s Badge indicator -->
+      <div id="countdown-chip" class="hidden items-center justify-center space-x-1 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[10px] font-mono-code text-amber-400">
+        <i class="fa-regular fa-clock text-[9px]"></i>
+        <span id="countdown-display">5.0s</span>
+      </div>
+
+      <!-- Floor Header & Details From Official Image -->
+      <div class="text-center px-1 overflow-hidden">
+        <div class="flex items-center justify-center gap-1.5 truncate">
+          <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="floor-title" class="text-[10px] font-mono-code font-bold text-amber-400 uppercase tracking-wide truncate">
+            BASEMENT: PARKING, CORE INFRASTRUCTURE
+          </span>
+        </div>
+        <div id="floor-subunits" class="text-[10px] text-slate-300 truncate mt-0.5">
+          Parking • Genset/UPS Room • Electrical Control Room
+        </div>
+      </div>
+
+      <!-- Rotate & Speed -->
+      <div class="flex items-center justify-between gap-1">
+        <button id="rotate-btn" onclick="toggleRotate()" class="glass-ui text-slate-300 px-2 h-7 rounded-md text-[11px] font-medium flex items-center gap-1 transition flex-1 justify-center">
+          <i class="fa-solid fa-rotate text-amber-400 text-[10px]"></i>
+          <span class="hidden sm:inline">360°</span>
+        </button>
+        <button onclick="cycleSpeed()" id="speed-chip" class="glass-ui font-mono-code text-amber-400 px-2 h-7 rounded-md text-[11px] font-bold transition flex-1">
+          1.0x
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    // EXACT OFFICIAL DATA FROM 3 SLIDES
+    const FLOORS_DATA = [
+      {
+        id: 0,
+        name: "BASEMENT: PARKING, CORE INFRASTRUCTURE",
+        subUnits: "Parking • Genset/UPS Room • Electrical Control Room",
+        remarks: "Added dedicated Genset/UPS Room and Electrical Control Room to support 24x7 technology-driven operations.",
+        floorIndex: 0,
+        cam: { x: 20, y: 5, z: 20 },
+        look: { x: 0, y: -0.5, z: 0 },
+        craneAngle: -0.8,
+        markers: [
+          { name: "Heavy RCC Basement Parking", pos: { x: -5, y: -0.2, z: 3 }, color: "bg-slate-700 text-white", icon: "fa-car" },
+          { name: "500 KVA Genset & UPS Power Room", pos: { x: 4.5, y: -0.2, z: -3.5 }, color: "bg-emerald-600 text-white", icon: "fa-bolt" },
+          { name: "Electrical Control Room & Substation", pos: { x: -4.5, y: -0.2, z: -3.5 }, color: "bg-amber-600 text-white", icon: "fa-plug" }
+        ]
+      },
+      {
+        id: 1,
+        name: "GROUND FLOOR: STILT PARKING, MT OFFICE & VISITOR DESK",
+        subUnits: "Stilt Parking • MT Office • Admin • Visitor Management Desk",
+        remarks: "Added Visitor Management Desk to improve access control, visitor handling, and security management.",
+        floorIndex: 1,
+        cam: { x: -18, y: 8, z: 18 },
+        look: { x: 0, y: 1.5, z: 0 },
+        craneAngle: -0.6,
+        markers: [
+          { name: "Stilt Parking (Official Vehicles)", pos: { x: -5, y: 2.2, z: 3 }, color: "bg-blue-600 text-white", icon: "fa-square-parking" },
+          { name: "MT Office (Motor Transport)", pos: { x: -4, y: 2.2, z: -3 }, color: "bg-amber-600 text-white", icon: "fa-truck-pickup" },
+          { name: "Visitor Management Desk", pos: { x: 4, y: 2.2, z: 3 }, color: "bg-cyan-600 text-white", icon: "fa-id-card" },
+          { name: "Facility Admin & Access Gate", pos: { x: 4.5, y: 2.2, z: -3 }, color: "bg-indigo-600 text-white", icon: "fa-door-closed" }
+        ]
+      },
+      {
+        id: 2,
+        name: "1ST FLOOR: CITIZEN RESPONSE & DISPATCH (ERSS)",
+        subUnits: "Integrated ERSS (112, 1930, 1905, 1933, 1064) • Complaint Mgmt • Dispatch Cell • Public Facilitation Centre",
+        remarks: "Expanded ERSS scope to include helplines, CMS, Dispatch and Public Facilitation Centre under one umbrella.",
+        floorIndex: 2,
+        cam: { x: 19, y: 11, z: 17 },
+        look: { x: 0, y: 4.2, z: 0 },
+        craneAngle: -0.4,
+        markers: [
+          { name: "Integrated ERSS Pods (112 & 1930)", pos: { x: -3.5, y: 5.2, z: 2.5 }, color: "bg-red-600 text-white", icon: "fa-headset" },
+          { name: "State Helplines (1905, 1933, 1064)", pos: { x: -3.5, y: 5.2, z: -2.5 }, color: "bg-amber-600 text-white", icon: "fa-phone-volume" },
+          { name: "Automated Dispatch Cell", pos: { x: 3.5, y: 5.2, z: -3 }, color: "bg-blue-600 text-white", icon: "fa-tower-broadcast" },
+          { name: "Public Facilitation Centre (PFC)", pos: { x: 4, y: 5.2, z: 2.5 }, color: "bg-emerald-600 text-white", icon: "fa-handshake-angle" }
+        ]
+      },
+      {
+        id: 3,
+        name: "2ND FLOOR: STATE CRIME RECORDS BUREAU (SCRB) & ANALYTICS",
+        subUnits: "SCRB • CCTNS • Fingerprint Bureau • Crime Analytics",
+        remarks: "Added Fingerprint Bureau and Crime Analytics to strengthen crime data integration and evidence-based policing.",
+        floorIndex: 3,
+        cam: { x: -18, y: 14, z: 16 },
+        look: { x: 0, y: 7.0, z: 0 },
+        craneAngle: -0.2,
+        markers: [
+          { name: "SCRB Command Section", pos: { x: -4, y: 8.0, z: -2.5 }, color: "bg-indigo-600 text-white", icon: "fa-folder-closed" },
+          { name: "State CCTNS Central Hub", pos: { x: 3.5, y: 8.0, z: -2.5 }, color: "bg-cyan-600 text-white", icon: "fa-network-wired" },
+          { name: "Fingerprint Bureau & AFIS", pos: { x: -3.5, y: 8.0, z: 3.0 }, color: "bg-purple-600 text-white", icon: "fa-fingerprint" },
+          { name: "Crime Analytics Wing", pos: { x: 4, y: 8.0, z: 3.0 }, color: "bg-teal-600 text-white", icon: "fa-chart-pie" }
+        ]
+      },
+      {
+        id: 4,
+        name: "3RD FLOOR: AI, VIDEO ANALYTICS & PREDICTIVE POLICING",
+        subUnits: "AI & ML Lab • Video Analytics • FRS • ANPR • GIS Lab • Predictive Policing • Fusion Platform Data Lake • War Room",
+        remarks: "Added AI/ML, GIS Lab, Intelligence Fusion Platform with Data Lake, and War Room for integrated analytics.",
+        floorIndex: 4,
+        cam: { x: 19, y: 17, z: 16 },
+        look: { x: 0, y: 9.8, z: 0 },
+        craneAngle: 0.0,
+        markers: [
+          { name: "Video Analytics, FRS & ANPR Hub", pos: { x: 4, y: 10.8, z: -2 }, color: "bg-violet-600 text-white", icon: "fa-camera" },
+          { name: "AI and ML Lab", pos: { x: -4, y: 10.8, z: -3 }, color: "bg-cyan-600 text-white", icon: "fa-brain" },
+          { name: "GIS Lab & Predictive Policing", pos: { x: -4, y: 10.8, z: 3 }, color: "bg-emerald-600 text-white", icon: "fa-map-location-dot" },
+          { name: "State Fusion Data Lake & War Room", pos: { x: 3, y: 10.8, z: 3 }, color: "bg-rose-600 text-white", icon: "fa-shield-virus" }
+        ]
+      },
+      {
+        id: 5,
+        name: "4TH FLOOR: CYBER THREAT INTELLIGENCE CENTRE (CTIC)",
+        subUnits: "Cyber Threat Intelligence • Dark Web Monitoring • OSINT • Social Media Monitoring • Cyber Threat Hunting Cell",
+        remarks: "Dedicated CTI centre consolidating OSINT, Dark Web, Social Media, and Threat Hunting functions.",
+        floorIndex: 5,
+        cam: { x: -18, y: 20, z: 16 },
+        look: { x: 0, y: 12.6, z: 0 },
+        craneAngle: 0.2,
+        markers: [
+          { name: "Cyber Threat Hunting Cell", pos: { x: 4, y: 13.6, z: -2.5 }, color: "bg-amber-500 text-slate-950", icon: "fa-crosshairs" },
+          { name: "Dark Web Monitoring Pod", pos: { x: -4, y: 13.6, z: -3 }, color: "bg-slate-800 text-amber-300", icon: "fa-user-secret" },
+          { name: "OSINT Intelligence Desk", pos: { x: -4, y: 13.6, z: 3 }, color: "bg-blue-600 text-white", icon: "fa-globe" },
+          { name: "Social Media Vigilance Unit", pos: { x: 3.5, y: 13.6, z: 3 }, color: "bg-purple-600 text-white", icon: "fa-hashtag" }
+        ]
+      },
+      {
+        id: 6,
+        name: "5TH FLOOR: CYBER INVESTIGATION & OPERATIONS CENTRE",
+        subUnits: "Banking Cell • Telecom Cell • Payment Aggregators (PhonePe, GPay, Paytm) • Crypto • Forensics • NATGRID/I4C Cell",
+        remarks: "Specialized investigation units for Banking, Telecom, Aggregators, Cryptocurrency, Forensics & National Liaison.",
+        floorIndex: 6,
+        cam: { x: 19, y: 23, z: 16 },
+        look: { x: 0, y: 15.4, z: 0 },
+        craneAngle: 0.4,
+        markers: [
+          { name: "Payment Aggregator & Banking Cell", pos: { x: -4, y: 16.4, z: 3 }, color: "bg-emerald-500 text-slate-950", icon: "fa-building-columns" },
+          { name: "Cryptocurrency Investigation Cell", pos: { x: 4, y: 16.4, z: 3 }, color: "bg-amber-600 text-white", icon: "fa-coins" },
+          { name: "Technical Investigation Forensic Cell", pos: { x: -4, y: 16.4, z: -3 }, color: "bg-indigo-600 text-white", icon: "fa-microscope" },
+          { name: "Telecom & National Liaison (I4C/NATGRID)", pos: { x: 4, y: 16.4, z: -3 }, color: "bg-cyan-600 text-white", icon: "fa-tower-cell" }
+        ]
+      },
+      {
+        id: 7,
+        name: "6TH FLOOR: TECHNOLOGY OPERATIONS CENTRE & DATA CENTRE",
+        subUnits: "Server Room (Data Centre) • System Integrator Room • Network Operations Centre (NOC)",
+        remarks: "Centralized management of critical IT infrastructure, on-prem cloud racks, and live network monitoring.",
+        floorIndex: 7,
+        cam: { x: -18, y: 26, z: 16 },
+        look: { x: 0, y: 18.2, z: 0 },
+        craneAngle: 0.6,
+        markers: [
+          { name: "Tier-3 Secure Data Centre (DC)", pos: { x: -3.5, y: 19.2, z: -2.5 }, color: "bg-sky-600 text-white", icon: "fa-server" },
+          { name: "System Integrator (SI) Facility", pos: { x: 4, y: 19.2, z: -2.5 }, color: "bg-slate-700 text-white", icon: "fa-screwdriver-wrench" },
+          { name: "24x7 Network Operations Centre (NOC)", pos: { x: 0, y: 19.2, z: 3 }, color: "bg-blue-600 text-white", icon: "fa-network-wired" }
+        ]
+      },
+      {
+        id: 8,
+        name: "7TH FLOOR: S4C ADMINISTRATION COORDINATION CENTRE",
+        subUnits: "Director S4C Office • DIG Office • Finance Wing • HR Wing • Legal Cell • Procurement Cell",
+        remarks: "Centralized governance, policy, finance, HR, legal compliance, and procurement for the entire facility.",
+        floorIndex: 8,
+        cam: { x: 19, y: 29, z: 16 },
+        look: { x: 0, y: 21.0, z: 0 },
+        craneAngle: 0.8,
+        markers: [
+          { name: "Director S4C & DIG Chambers", pos: { x: 4, y: 22.0, z: 2.5 }, color: "bg-amber-500 text-slate-950", icon: "fa-user-tie" },
+          { name: "Legal Cell & Regulatory Compliance", pos: { x: -4, y: 22.0, z: 2.5 }, color: "bg-purple-600 text-white", icon: "fa-scale-balanced" },
+          { name: "Finance, HR & Procurement Wings", pos: { x: 0, y: 22.0, z: -3.5 }, color: "bg-emerald-600 text-white", icon: "fa-file-invoice-dollar" }
+        ]
+      },
+      {
+        id: 9,
+        name: "8TH FLOOR: TRAINING, RESEARCH & INNOVATION CENTRE",
+        subUnits: "Cyber Training Hall • Cyber Training Lab & Simulation • Innovation & Research Lab • Conference Hall",
+        remarks: "Expanded capacity building for Cyber Commandos, simulation war games, and innovative tool creation.",
+        floorIndex: 9,
+        cam: { x: -18, y: 32, z: 16 },
+        look: { x: 0, y: 23.8, z: 0 },
+        craneAngle: 1.0,
+        markers: [
+          { name: "Cyber Training Lab & Simulation Centre", pos: { x: -4, y: 24.8, z: -2.5 }, color: "bg-cyan-500 text-slate-950", icon: "fa-laptop-code" },
+          { name: "50-Seater Cyber Training Hall", pos: { x: 3.5, y: 24.8, z: -2.5 }, color: "bg-emerald-600 text-white", icon: "fa-chalkboard-user" },
+          { name: "Innovation & Research Lab", pos: { x: -3.5, y: 24.8, z: 3.5 }, color: "bg-indigo-600 text-white", icon: "fa-lightbulb" },
+          { name: "State Conference Hall", pos: { x: 3.5, y: 24.8, z: 3.5 }, color: "bg-amber-600 text-white", icon: "fa-users-rectangle" }
+        ]
+      },
+      {
+        id: 10,
+        name: "TERRACE: COMMUNICATION & TECHNICAL INFRASTRUCTURE",
+        subUnits: "Rooftop Communication Towers • Satellite Ground Links • RF Dishes • Secure Wireless Relay",
+        remarks: "Retained for heavy duty communication infrastructure with uninterrupted satellite and wireless police links.",
+        floorIndex: 10,
+        cam: { x: 34, y: 36, z: 34 },
+        look: { x: 0, y: 14.0, z: 0 },
+        craneAngle: 0.0,
+        markers: [
+          { name: "High-Gain Satellite Communication Dishes", pos: { x: -4, y: 28.5, z: -3.5 }, color: "bg-cyan-500 text-slate-950", icon: "fa-satellite-dish" },
+          { name: "Secure Wireless RF Mast", pos: { x: 4, y: 28.5, z: -3.5 }, color: "bg-blue-600 text-white", icon: "fa-tower-broadcast" }
+        ]
+      }
+    ];
+
+    // State Variables
+    let scene, camera, renderer, controls;
+    let floorGroups = [];
+    let floorCeilings = [];
+    let scaffoldGroups = [];
+    let roofGroup = null;
+    let towerCrane = null;
+    let craneJib = null;
+    let craneHook = null;
+    let currentFloorId = 0; // Starts from Basement!
+    let isPlaying = false;
+    let playTimer = null;
+    let countdownInterval = null;
+    let isExploded = false;
+    let autoRotate = false;
+    let showScaffolding = true;
+    let showAllFloorLines = false;
+    let speed = 1.0;
+    let createdLabelDoms = [];
+    const DWELL_TIME_MS = 5000; // Exact 5-second wait per floor
+    let dwellStart = 0;
+
+    const TOTAL_LEVELS = 10; // B, G, 1 to 8
+    const SLAB_W = 18;
+    const SLAB_L = 13;
+    const FLOOR_H = 2.6; // height per floor
+
+    function init() {
+      const splash = document.getElementById('brand-splash');
+      if (splash) {
+        setTimeout(() => {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 800);
+        }, 1800);
+      }
+
+      const container = document.getElementById('canvas-container');
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x060913);
+      scene.fog = new THREE.FogExp2(0x060913, 0.012);
+
+      camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+      camera.position.set(20, 5, 20);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2 + 0.02;
+      controls.minDistance = 6;
+      controls.maxDistance = 110;
+      controls.target.set(0, -0.5, 0);
+
+      // Studio Lighting
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      scene.add(ambLight);
+
+      const sun = new THREE.DirectionalLight(0xffedd5, 1.3);
+      sun.position.set(35, 60, 30);
+      sun.castShadow = true;
+      sun.shadow.mapSize.width = 2048;
+      sun.shadow.mapSize.height = 2048;
+      scene.add(sun);
+
+      const fillLight = new THREE.DirectionalLight(0x0284c7, 0.65);
+      fillLight.position.set(-30, 35, -25);
+      scene.add(fillLight);
+
+      buildConstructionSite();
+      buildTowerCrane();
+      buildAllTenFloors();
+      buildTerraceInfra();
+
+      window.addEventListener('resize', onResize);
+      
+      // Initialize cleanly starting at BASEMENT (Level 0)
+      setFloorStage(0);
+      animate();
+    }
+
+    function buildConstructionSite() {
+      // Ground plane
+      const ground = new THREE.Mesh(
+        new THREE.BoxGeometry(50, 0.5, 45),
+        new THREE.MeshStandardMaterial({ color: 0x090e1c, roughness: 0.9 })
+      );
+      ground.position.y = -0.25;
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // Safety Engineering Construction Grid
+      const grid = new THREE.GridHelper(70, 35, 0xf59e0b, 0x1e293b);
+      grid.position.y = 0.02;
+      scene.add(grid);
+
+      // Deep Basement Foundation Excavation Pit
+      const pit = new THREE.Mesh(
+        new THREE.BoxGeometry(22, 1.2, 17),
+        new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 1.0 })
+      );
+      pit.position.set(0, -0.6, 0);
+      scene.add(pit);
+
+      // Heavy Safety Barricades around Site
+      const coneMat = new THREE.MeshStandardMaterial({ color: 0xf97316 });
+      const whiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      for (let c = -16; c <= 16; c += 4) {
+        const cone = new THREE.Group();
+        const coneBody = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.7, 10), coneMat);
+        coneBody.position.y = 0.35;
+        const stripe = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.15, 10), whiteMat);
+        stripe.position.y = 0.35;
+        cone.add(coneBody, stripe);
+        cone.position.set(c, 0, 13);
+        scene.add(cone);
+      }
+    }
+
+    function buildTowerCrane() {
+      towerCrane = new THREE.Group();
+      towerCrane.position.set(-15, 0, -10);
+
+      const steelMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.6, roughness: 0.3 });
+      const darkSteel = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 });
+
+      // Concrete Crane Base
+      const cBase = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.8, 4.5), new THREE.MeshStandardMaterial({ color: 0x334155 }));
+      cBase.position.y = 0.4;
+      towerCrane.add(cBase);
+
+      // Tall 38m Mast to clear 10 storeys
+      const mastHeight = 36;
+      const mast = new THREE.Mesh(new THREE.BoxGeometry(1.6, mastHeight, 1.6), steelMat);
+      mast.position.y = mastHeight / 2 + 0.4;
+      towerCrane.add(mast);
+
+      // Slew Turntable & Jib
+      craneJib = new THREE.Group();
+      craneJib.position.set(0, mastHeight + 0.4, 0);
+
+      // Operator Cabin
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.5), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 }));
+      cabin.position.set(0.9, 0.9, 1.0);
+      craneJib.add(cabin);
+
+      // Long Working Jib Arm
+      const jibArm = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 30), steelMat);
+      jibArm.position.set(0, 1.2, 12);
+      craneJib.add(jibArm);
+
+      // Counter-Jib & Concrete Counterweight
+      const counterJib = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 10), steelMat);
+      counterJib.position.set(0, 1.2, -6);
+      const counterWeight = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.0, 3.2), new THREE.MeshStandardMaterial({ color: 0x475569 }));
+      counterWeight.position.set(0, 2.0, -9);
+      craneJib.add(counterJib, counterWeight);
+
+      // Hoist Cable & Hook with Precast Beam
+      craneHook = new THREE.Group();
+      craneHook.position.set(0, 0, 15);
+
+      const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 10, 8), darkSteel);
+      cable.position.y = -4.5;
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.4, 0.5), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+      beam.position.y = -9.5;
+      craneHook.add(cable, beam);
+      craneJib.add(craneHook);
+
+      towerCrane.add(craneJib);
+      scene.add(towerCrane);
+    }
+
+    function buildAllTenFloors() {
+      for (let i = 0; i < TOTAL_LEVELS; i++) {
+        const floorGroup = new THREE.Group();
+        // i=0 is Basement (Y: 0.1), i=1 is Ground Floor (Y: 2.9), up to i=9 is 8th Floor
+        const yPos = i * (FLOOR_H + 0.2) + 0.1;
+        floorGroup.position.set(0, yPos, 0);
+        floorGroup.userData = { defaultY: yPos, index: i };
+
+        // RCC Floor Slab
+        const slabColor = (i === 0) ? 0x1e293b : (i === 1 ? 0x0f172a : 0x0c1427);
+        const slab = new THREE.Mesh(
+          new THREE.BoxGeometry(SLAB_W, 0.28, SLAB_L),
+          new THREE.MeshStandardMaterial({ color: slabColor, roughness: 0.7 })
+        );
+        slab.receiveShadow = true;
+        slab.castShadow = true;
+        floorGroup.add(slab);
+
+        // Ceiling Slab (hidden when floor is individually inspected)
+        const ceiling = new THREE.Mesh(
+          new THREE.BoxGeometry(SLAB_W, 0.18, SLAB_L),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 })
+        );
+        ceiling.position.y = FLOOR_H;
+        floorGroup.add(ceiling);
+        floorCeilings.push(ceiling);
+
+        // Architectural Glass Curtain Wall
+        const glass = new THREE.Mesh(
+          new THREE.BoxGeometry(SLAB_W - 0.1, FLOOR_H - 0.15, SLAB_L - 0.1),
+          new THREE.MeshPhysicalMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.16,
+            roughness: 0.1,
+            transmission: 0.7,
+            side: THREE.DoubleSide
+          })
+        );
+        glass.position.y = FLOOR_H / 2;
+        floorGroup.add(glass);
+
+        // RCC Columns
+        const colMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 });
+        [
+          [-SLAB_W/2 + 0.5, -SLAB_L/2 + 0.5],
+          [SLAB_W/2 - 0.5, -SLAB_L/2 + 0.5],
+          [-SLAB_W/2 + 0.5, SLAB_L/2 - 0.5],
+          [SLAB_W/2 - 0.5, SLAB_L/2 - 0.5],
+          [0, -SLAB_L/2 + 0.5],
+          [0, SLAB_L/2 - 0.5]
+        ].forEach(([cx, cz]) => {
+          const col = new THREE.Mesh(new THREE.BoxGeometry(0.45, FLOOR_H, 0.45), colMat);
+          col.position.set(cx, FLOOR_H / 2, cz);
+          floorGroup.add(col);
+        });
+
+        // Build specific units for this exact floor
+        buildFloorInterior(floorGroup, i);
+
+        // External Steel Scaffolding Tubes
+        const scaffold = buildFloorScaffold(SLAB_W, SLAB_L, FLOOR_H);
+        floorGroup.add(scaffold);
+        scaffoldGroups.push(scaffold);
+
+        scene.add(floorGroup);
+        floorGroups.push(floorGroup);
+      }
+    }
+
+    // Helper: Scaffolding tubes
+    function buildFloorScaffold(w, l, h) {
+      const scaffold = new THREE.Group();
+      const pipeMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.6, roughness: 0.4 });
+      const plankMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.8 });
+
+      const xSpan = w / 2 + 0.7;
+      const zSpan = l / 2 + 0.7;
+
+      [-zSpan, zSpan].forEach(zPos => {
+        for (let x = -xSpan; x <= xSpan; x += 3.6) {
+          const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, h, 6), pipeMat);
+          pipe.position.set(x, h / 2, zPos);
+          scaffold.add(pipe);
+        }
+        const plank = new THREE.Mesh(new THREE.BoxGeometry(w + 1.4, 0.08, 0.65), plankMat);
+        plank.position.set(0, h * 0.45, zPos);
+        scaffold.add(plank);
+      });
+      return scaffold;
+    }
+
+    const furnitureMats = {
+      woodDesk: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6 }),
+      executiveWood: new THREE.MeshStandardMaterial({ color: 0x582a12, roughness: 0.4 }),
+      metalFrame: new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.2 }),
+      chairSeat: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 }),
+      leatherSeat: new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.5 }),
+      screenBezel: new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.3 }),
+      screenGlowCyan: new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
+      screenGlowAmber: new THREE.MeshBasicMaterial({ color: 0xf59e0b }),
+      screenGlowGreen: new THREE.MeshBasicMaterial({ color: 0x10b981 }),
+      screenGlowRed: new THREE.MeshBasicMaterial({ color: 0xef4444 }),
+      serverChassis: new THREE.MeshStandardMaterial({ color: 0x0b1120, metalness: 0.9, roughness: 0.2 })
+    };
+
+    const peopleMats = {
+      skin: new THREE.MeshStandardMaterial({ color: 0xdfad87, roughness: 0.7 }),
+      hairDark: new THREE.MeshStandardMaterial({ color: 0x171717, roughness: 0.8 }),
+      policeKhaki: new THREE.MeshStandardMaterial({ color: 0xc89b4f, roughness: 0.6 }),
+      policeBeret: new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.5 }),
+      policePants: new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.7 }),
+      analystBlue: new THREE.MeshStandardMaterial({ color: 0x3b82f6, roughness: 0.6 }),
+      analystWhite: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5 }),
+      darkPants: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 }),
+      suitBlack: new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.5 }),
+      visitorShirt: new THREE.MeshStandardMaterial({ color: 0x059669, roughness: 0.6 }),
+      headsetMat: new THREE.MeshStandardMaterial({ color: 0x020617, metalness: 0.7 }),
+      idCard: new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+    };
+
+    function createHumanFigure(config = {}) {
+      const figure = new THREE.Group();
+      figure.position.set(config.x || 0, config.y || 0, config.z || 0);
+      figure.rotation.y = config.rotY || 0;
+
+      const isSitting = config.isSitting !== undefined ? config.isSitting : true;
+      const role = config.role || 'analyst';
+      const hasHeadset = config.hasHeadset || false;
+
+      let shirtMat = peopleMats.analystBlue;
+      let pantsMat = peopleMats.darkPants;
+      let hasBeret = false;
+
+      if (role === 'police') {
+        shirtMat = peopleMats.policeKhaki;
+        pantsMat = peopleMats.policePants;
+        hasBeret = true;
+      } else if (role === 'executive') {
+        shirtMat = peopleMats.suitBlack;
+        pantsMat = peopleMats.darkPants;
+      } else if (role === 'visitor') {
+        shirtMat = peopleMats.visitorShirt;
+        pantsMat = peopleMats.darkPants;
+      } else if (role === 'calltaker') {
+        shirtMat = peopleMats.analystWhite;
+        pantsMat = peopleMats.darkPants;
+      }
+
+      if (isSitting) {
+        const pelvisY = 0.34;
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.32, 0.16), shirtMat);
+        torso.position.y = pelvisY + 0.16;
+        figure.add(torso);
+
+        if (role !== 'visitor') {
+          const badge = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.01), peopleMats.idCard);
+          badge.position.set(0, pelvisY + 0.16, 0.085);
+          figure.add(badge);
+        }
+
+        const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 6), peopleMats.skin);
+        neck.position.y = pelvisY + 0.35;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), peopleMats.skin);
+        head.position.y = pelvisY + 0.44;
+        figure.add(neck, head);
+
+        if (hasBeret) {
+          const beret = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.09, 0.05, 8), peopleMats.policeBeret);
+          beret.position.set(0.02, pelvisY + 0.52, -0.01);
+          beret.rotation.z = -0.15;
+          figure.add(beret);
+        } else {
+          const hair = new THREE.Mesh(new THREE.SphereGeometry(0.094, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2), peopleMats.hairDark);
+          hair.position.y = pelvisY + 0.44;
+          figure.add(hair);
+        }
+
+        if (hasHeadset) {
+          const band = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.012, 4, 12, Math.PI), peopleMats.headsetMat);
+          band.rotation.x = Math.PI / 2;
+          band.position.set(0, pelvisY + 0.45, 0);
+          const mic = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.09, 4), peopleMats.headsetMat);
+          mic.rotation.x = Math.PI / 2.5;
+          mic.position.set(0.08, pelvisY + 0.42, 0.07);
+          figure.add(band, mic);
+        }
+
+        [-0.15, 0.15].forEach(ax => {
+          const upperArm = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.20, 0.06), shirtMat);
+          upperArm.position.set(ax, pelvisY + 0.20, 0.04);
+          upperArm.rotation.x = 0.35;
+
+          const forearm = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.18), peopleMats.skin);
+          forearm.position.set(ax, pelvisY + 0.12, 0.16);
+          figure.add(upperArm, forearm);
+        });
+
+        [-0.07, 0.07].forEach(lx => {
+          const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.07, 0.24), pantsMat);
+          thigh.position.set(lx, pelvisY - 0.02, 0.10);
+          const shin = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.30, 0.07), pantsMat);
+          shin.position.set(lx, 0.15, 0.20);
+          const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.12), peopleMats.hairDark);
+          shoe.position.set(lx, 0.025, 0.23);
+          figure.add(thigh, shin, shoe);
+        });
+
+      } else {
+        const groundLegH = 0.65;
+        [-0.07, 0.07].forEach(lx => {
+          const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, groundLegH, 0.08), pantsMat);
+          leg.position.set(lx, groundLegH / 2, 0);
+          const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.06, 0.14), peopleMats.hairDark);
+          shoe.position.set(lx, 0.03, 0.03);
+          figure.add(leg, shoe);
+        });
+
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.38, 0.17), shirtMat);
+        torso.position.y = groundLegH + 0.19;
+        figure.add(torso);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.095, 8, 8), peopleMats.skin);
+        head.position.y = groundLegH + 0.47;
+        figure.add(head);
+
+        if (hasBeret) {
+          const beret = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.05, 8), peopleMats.policeBeret);
+          beret.position.set(0.02, groundLegH + 0.55, -0.01);
+          beret.rotation.z = -0.15;
+          figure.add(beret);
+        }
+
+        [-0.17, 0.17].forEach(ax => {
+          const arm = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.34, 0.06), shirtMat);
+          arm.position.set(ax, groundLegH + 0.16, 0);
+          figure.add(arm);
+        });
+      }
+
+      return figure;
+    }
+
+    function createErgonomicChair(x, z, rotY = 0, isExecutive = false) {
+      const chair = new THREE.Group();
+      chair.position.set(x, 0, z);
+      chair.rotation.y = rotY;
+
+      const seatMat = isExecutive ? furnitureMats.leatherSeat : furnitureMats.chairSeat;
+      const frameMat = furnitureMats.metalFrame;
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.04, 8), frameMat);
+      base.position.y = 0.06;
+      chair.add(base);
+
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.24, 8), frameMat);
+      stem.position.y = 0.18;
+      chair.add(stem);
+
+      const seatW = isExecutive ? 0.44 : 0.38;
+      const seatD = isExecutive ? 0.42 : 0.36;
+      const seat = new THREE.Mesh(new THREE.BoxGeometry(seatW, 0.06, seatD), seatMat);
+      seat.position.y = 0.32;
+      chair.add(seat);
+
+      const backH = isExecutive ? 0.56 : 0.42;
+      const back = new THREE.Mesh(new THREE.BoxGeometry(seatW * 0.95, backH, 0.05), seatMat);
+      back.position.set(0, 0.34 + backH / 2, -seatD / 2 + 0.02);
+      chair.add(back);
+
+      [-seatW / 2, seatW / 2].forEach(ax => {
+        const armPost = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.16, 0.03), frameMat);
+        armPost.position.set(ax, 0.40, 0);
+        const armRest = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.03, 0.26), seatMat);
+        armRest.position.set(ax, 0.48, 0);
+        chair.add(armPost, armRest);
+      });
+
+      return chair;
+    }
+
+    function createWorkstation(x, z, rotY = 0, options = {}) {
+      const station = new THREE.Group();
+      station.position.set(x, 0, z);
+      station.rotation.y = rotY;
+
+      const w = options.width || 1.4;
+      const d = options.depth || 0.7;
+      const h = 0.58;
+      const deskMat = options.isExecutive ? furnitureMats.executiveWood : furnitureMats.woodDesk;
+
+      const top = new THREE.Mesh(new THREE.BoxGeometry(w, 0.04, d), deskMat);
+      top.position.y = h;
+      station.add(top);
+
+      [-w / 2 + 0.04, w / 2 - 0.04].forEach(lx => {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, h - 0.02, d - 0.08), furnitureMats.metalFrame);
+        leg.position.set(lx, h / 2, 0);
+        station.add(leg);
+      });
+
+      const modesty = new THREE.Mesh(new THREE.BoxGeometry(w - 0.1, h * 0.55, 0.02), deskMat);
+      modesty.position.set(0, h * 0.65, -d / 2 + 0.04);
+      station.add(modesty);
+
+      const screenCount = options.screens || 2;
+      const screenGlow = options.screenGlow || furnitureMats.screenGlowCyan;
+      const monOffset = screenCount === 1 ? [0] : [-0.26, 0.26];
+
+      monOffset.forEach((sx, idx) => {
+        const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.015, 0.1), furnitureMats.metalFrame);
+        stand.position.set(sx, h + 0.02, -d * 0.2);
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.16, 0.02), furnitureMats.metalFrame);
+        post.position.set(sx, h + 0.09, -d * 0.2);
+
+        const screenBezel = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 0.02), furnitureMats.screenBezel);
+        screenBezel.position.set(sx, h + 0.22, -d * 0.2);
+        if (screenCount > 1) {
+          screenBezel.rotation.y = idx === 0 ? 0.15 : -0.15;
+        }
+
+        const screenFace = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 0.21), screenGlow);
+        screenFace.position.set(sx, h + 0.22, -d * 0.2 + 0.012);
+        if (screenCount > 1) {
+          screenFace.rotation.y = idx === 0 ? 0.15 : -0.15;
+        }
+
+        station.add(stand, post, screenBezel, screenFace);
+      });
+
+      const kb = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.01, 0.12), furnitureMats.screenBezel);
+      kb.position.set(0, h + 0.025, 0.05);
+      station.add(kb);
+
+      const tower = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.32, 0.32), furnitureMats.metalFrame);
+      tower.position.set(w / 2 - 0.16, 0.17, 0.05);
+      station.add(tower);
+
+      const chair = createErgonomicChair(0, 0.44, 0, options.isExecutive);
+      station.add(chair);
+
+      if (options.hasPerson !== false) {
+        const seatedOfficer = createHumanFigure({
+          x: 0,
+          y: 0,
+          z: 0.38,
+          rotY: 0,
+          isSitting: true,
+          role: options.personRole || (options.isExecutive ? 'executive' : 'analyst'),
+          hasHeadset: options.hasHeadset || false
+        });
+        station.add(seatedOfficer);
+      }
+
+      return station;
+    }
+
+    function createConferenceSuite(x, z, length = 3.6, width = 1.6, chairCount = 8) {
+      const suite = new THREE.Group();
+      suite.position.set(x, 0, z);
+
+      const tableH = 0.58;
+      const top = new THREE.Mesh(new THREE.BoxGeometry(length, 0.05, width), furnitureMats.executiveWood);
+      top.position.y = tableH;
+      suite.add(top);
+
+      const wireWell = new THREE.Mesh(new THREE.BoxGeometry(length * 0.6, 0.01, 0.18), furnitureMats.metalFrame);
+      wireWell.position.set(0, tableH + 0.026, 0);
+      suite.add(wireWell);
+
+      [-length / 3, length / 3].forEach(px => {
+        const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.3, tableH, width * 0.4), furnitureMats.metalFrame);
+        pillar.position.set(px, tableH / 2, 0);
+        suite.add(pillar);
+      });
+
+      const chairsPerSide = Math.floor((chairCount - 2) / 2);
+      const xSpacing = (length - 0.8) / (chairsPerSide - 1 || 1);
+
+      for (let i = 0; i < chairsPerSide; i++) {
+        const cx = -length / 2 + 0.4 + i * xSpacing;
+        suite.add(createErgonomicChair(cx, -width / 2 - 0.34, Math.PI, true));
+        suite.add(createErgonomicChair(cx, width / 2 + 0.34, 0, true));
+
+        if (i % 2 === 0) {
+          suite.add(createHumanFigure({ x: cx, z: -width / 2 - 0.30, rotY: 0, isSitting: true, role: 'police' }));
+        } else {
+          suite.add(createHumanFigure({ x: cx, z: width / 2 + 0.30, rotY: Math.PI, isSitting: true, role: 'analyst' }));
+        }
+      }
+      suite.add(createErgonomicChair(-length / 2 - 0.36, 0, Math.PI / 2, true));
+      suite.add(createHumanFigure({ x: -length / 2 - 0.32, z: 0, rotY: Math.PI / 2, isSitting: true, role: 'police' }));
+
+      suite.add(createErgonomicChair(length / 2 + 0.36, 0, -Math.PI / 2, true));
+      suite.add(createHumanFigure({ x: length / 2 + 0.32, z: 0, rotY: -Math.PI / 2, isSitting: true, role: 'executive' }));
+
+      return suite;
+    }
+
+    function createSecurityCheckpoint(x, z, rotY = 0) {
+      const checkpoint = new THREE.Group();
+      checkpoint.position.set(x, 0, z);
+      checkpoint.rotation.y = rotY;
+
+      const archH = 1.9;
+      const archW = 0.95;
+      const leftCol = new THREE.Mesh(new THREE.BoxGeometry(0.12, archH, 0.4), furnitureMats.metalFrame);
+      leftCol.position.set(-archW / 2, archH / 2, 0);
+      const rightCol = new THREE.Mesh(new THREE.BoxGeometry(0.12, archH, 0.4), furnitureMats.metalFrame);
+      rightCol.position.set(archW / 2, archH / 2, 0);
+      const topBeam = new THREE.Mesh(new THREE.BoxGeometry(archW + 0.12, 0.22, 0.4), furnitureMats.woodDesk);
+      topBeam.position.set(0, archH + 0.11, 0);
+
+      const ledGreen = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.02), furnitureMats.screenGlowGreen);
+      ledGreen.position.set(archW / 2 - 0.04, archH - 0.2, 0.21);
+      checkpoint.add(leftCol, rightCol, topBeam, ledGreen);
+
+      const xRayTunnel = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.95), furnitureMats.woodDesk);
+      xRayTunnel.position.set(1.5, 0.55, 0);
+      const conveyor = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.1, 0.7), furnitureMats.metalFrame);
+      conveyor.position.set(1.5, 0.5, 0);
+      const xRayMon = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.22, 0.03), furnitureMats.screenGlowCyan);
+      xRayMon.position.set(1.4, 1.25, -0.2);
+      checkpoint.add(xRayTunnel, conveyor, xRayMon);
+
+      const guard = createHumanFigure({ x: -archW - 0.2, z: 0.1, rotY: Math.PI / 3, isSitting: false, role: 'police' });
+      const xRayOperator = createHumanFigure({ x: 1.4, z: -0.6, rotY: 0, isSitting: true, role: 'police' });
+      checkpoint.add(guard, xRayOperator);
+
+      return checkpoint;
+    }
+
+    function createDetailedServerRack(x, z, rotY = 0) {
+      const rack = new THREE.Group();
+      rack.position.set(x, 0, z);
+      rack.rotation.y = rotY;
+
+      const chassis = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.1, 0.9), furnitureMats.serverChassis);
+      chassis.position.y = 1.05;
+      rack.add(chassis);
+
+      const glassDoor = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.72, 1.95),
+        new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35, roughness: 0.1 })
+      );
+      glassDoor.position.set(0, 1.05, 0.46);
+      rack.add(glassDoor);
+
+      for (let s = 0; s < 7; s++) {
+        const ledColor = (s % 2 === 0) ? furnitureMats.screenGlowCyan : furnitureMats.screenGlowGreen;
+        const ledStrip = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.03, 0.02), ledColor);
+        ledStrip.position.set(0, 0.35 + s * 0.24, 0.44);
+        rack.add(ledStrip);
+      }
+
+      return rack;
+    }
+
+    function createPolicePatrolCar(x, z, rotY = 0) {
+      const car = new THREE.Group();
+      car.position.set(x, 0, z);
+      car.rotation.y = rotY;
+
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 0.55, 3.6),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
+      );
+      body.position.y = 0.45;
+      car.add(body);
+
+      const cabin = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 0.5, 2.0),
+        new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.1 })
+      );
+      cabin.position.set(0, 0.9, -0.15);
+      car.add(cabin);
+
+      const redLight = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.08, 0.15), furnitureMats.screenGlowRed);
+      redLight.position.set(-0.25, 1.18, -0.15);
+      const blueLight = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.08, 0.15), furnitureMats.screenGlowCyan);
+      blueLight.position.set(0.25, 1.18, -0.15);
+      car.add(redLight, blueLight);
+
+      [[-0.9, 1.0], [0.9, 1.0], [-0.9, -1.0], [0.9, -1.0]].forEach(([wx, wz]) => {
+        const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.2, 12), furnitureMats.metalFrame);
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(wx, 0.26, wz);
+        car.add(wheel);
+      });
+
+      return car;
+    }
+
+    function createMarkerObjectByName(name, x, z, rotY = 0) {
+      const text = name.toLowerCase();
+
+      if (text.includes('parking') || text.includes('vehicle') || text.includes('car')) {
+        return createPolicePatrolCar(x, z, rotY);
+      }
+      if (text.includes('genset') || text.includes('ups') || text.includes('electrical') || text.includes('substation')) {
+        const unit = new THREE.Group();
+        unit.position.set(x, 0, z);
+        unit.rotation.y = rotY;
+        const cabinet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 0.9), new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.5 }));
+        cabinet.position.y = 0.6;
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.7, 0.08), furnitureMats.screenGlowAmber);
+        panel.position.set(0, 1.1, 0.46);
+        unit.add(cabinet, panel);
+        return unit;
+      }
+      if (text.includes('visitor') || text.includes('desk') || text.includes('reception') || text.includes('public') || text.includes('facilitation')) {
+        return createWorkstation(x, z, rotY, { width: 1.8, depth: 0.8, screens: 1, screenGlow: furnitureMats.screenGlowCyan, personRole: 'visitor' });
+      }
+      if (text.includes('dispatch') || text.includes('response') || text.includes('call') || text.includes('helpline') || text.includes('erss')) {
+        return createWorkstation(x, z, rotY, { width: 1.7, screens: 2, screenGlow: furnitureMats.screenGlowRed, personRole: 'calltaker', hasHeadset: true });
+      }
+      if (text.includes('scrb') || text.includes('cctns') || text.includes('crime') || text.includes('analytics') || text.includes('fingerprint') || text.includes('afis')) {
+        return createWorkstation(x, z, rotY, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' });
+      }
+      if (text.includes('ai') || text.includes('ml') || text.includes('video') || text.includes('frs') || text.includes('anpr') || text.includes('gis') || text.includes('fusion') || text.includes('war room')) {
+        return createConferenceSuite(x, z, 2.7, 1.4, 4);
+      }
+      if (text.includes('cyber') || text.includes('dark web') || text.includes('osint') || text.includes('social') || text.includes('threat') || text.includes('hunting')) {
+        return createWorkstation(x, z, rotY, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'police' });
+      }
+      if (text.includes('banking') || text.includes('telecom') || text.includes('aggregator') || text.includes('crypto') || text.includes('forensic') || text.includes('natgrid') || text.includes('i4c')) {
+        return createWorkstation(x, z, rotY, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowGreen, personRole: 'analyst' });
+      }
+      if (text.includes('data centre') || text.includes('server') || text.includes('noc') || text.includes('network')) {
+        return createDetailedServerRack(x, z, rotY);
+      }
+      if (text.includes('director') || text.includes('finance') || text.includes('hr') || text.includes('legal') || text.includes('procurement') || text.includes('office')) {
+        return createWorkstation(x, z, rotY, { width: 2.1, depth: 0.8, screens: 2, isExecutive: true, personRole: 'executive', screenGlow: furnitureMats.screenGlowAmber });
+      }
+      if (text.includes('training') || text.includes('innovation') || text.includes('research') || text.includes('conference') || text.includes('lab')) {
+        return createConferenceSuite(x, z, 3.2, 1.6, 6);
+      }
+      if (text.includes('satellite') || text.includes('rf') || text.includes('wireless') || text.includes('dish') || text.includes('mast')) {
+        const mast = new THREE.Group();
+        mast.position.set(x, 0, z);
+        mast.rotation.y = rotY;
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 2.6, 8), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+        pole.position.y = 1.3;
+        const dish = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 8, 0, Math.PI), new THREE.MeshStandardMaterial({ color: 0xf8fafc, side: THREE.DoubleSide }));
+        dish.rotation.x = Math.PI / 3;
+        dish.position.set(0, 2.4, 0);
+        mast.add(pole, dish);
+        return mast;
+      }
+
+      return createWorkstation(x, z, rotY, { screens: 1, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' });
+    }
+
+    function buildFloorInterior(group, level) {
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+
+      // Core Elevator Shaft & Fire Exit Stairwell on every floor
+      const core = new THREE.Mesh(new THREE.BoxGeometry(3.5, FLOOR_H, 3.2), wallMat);
+      core.position.set(-6.5, FLOOR_H / 2, -3.2);
+      group.add(core);
+
+      if (level === 0) {
+        // BASEMENT: Parking, Genset/UPS Room, Electrical Control Room
+        group.add(createPolicePatrolCar(-4.5, 2.6, 0));
+        group.add(createPolicePatrolCar(-1.8, 2.6, 0));
+
+        for (let p = -5.8; p <= 0; p += 2.6) {
+          const pLine = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 4.2), furnitureMats.screenGlowAmber);
+          pLine.position.set(p, 0.02, 2.6);
+          group.add(pLine);
+        }
+
+        const gensetGroup = new THREE.Group();
+        gensetGroup.position.set(4.5, 0, -3.2);
+        const engineBody = new THREE.Mesh(
+          new THREE.BoxGeometry(3.2, 1.6, 2.0),
+          new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.5 })
+        );
+        engineBody.position.y = 0.8;
+        const radGrill = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 1.6), furnitureMats.metalFrame);
+        radGrill.position.set(-1.6, 0.8, 0);
+        const exhaust = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.4, 8), furnitureMats.metalFrame);
+        exhaust.position.set(1.2, 1.9, -0.5);
+        gensetGroup.add(engineBody, radGrill, exhaust);
+        group.add(gensetGroup);
+
+        for (let e = 0; e < 3; e++) {
+          const panel = new THREE.Mesh(
+            new THREE.BoxGeometry(0.9, 1.8, 0.65),
+            new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4 })
+          );
+          panel.position.set(-4.5 + e * 1.2, 0.9, -3.5);
+          const led = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.06, 0.04), furnitureMats.screenGlowRed);
+          led.position.set(-4.5 + e * 1.2, 1.45, -3.15);
+          group.add(panel, led);
+        }
+
+        group.add(createHumanFigure({ x: -2.5, y: 0, z: -2.7, rotY: -Math.PI / 4, isSitting: false, role: 'analyst' }));
+
+        for (let u = 0; u < 2; u++) {
+          const ups = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.4, 0.7), furnitureMats.woodDesk);
+          ups.position.set(4.2, 0.7, 1.5 + u * 1.4);
+          group.add(ups);
+        }
+
+      } else if (level === 1) {
+        // GROUND FLOOR: Stilt Parking, MT Office, Admin & Visitor Desk
+        group.add(createPolicePatrolCar(-5.0, 2.6, 0));
+
+        group.add(createWorkstation(-4.2, -3.0, 0, { width: 1.5, screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'police' }));
+        group.add(createWorkstation(-1.8, -3.0, 0, { width: 1.5, screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'police' }));
+
+        group.add(createSecurityCheckpoint(4.0, 2.2, 0));
+
+        const receptionDesk = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.75, 0.8), furnitureMats.woodDesk);
+        receptionDesk.position.set(4.0, 0.38, -1.8);
+        group.add(receptionDesk);
+
+        group.add(createErgonomicChair(4.0, -2.4, 0, false));
+        group.add(createHumanFigure({ x: 4.0, z: -2.4, rotY: 0, isSitting: true, role: 'police' }));
+
+        group.add(createErgonomicChair(3.2, -1.1, Math.PI, false));
+        group.add(createHumanFigure({ x: 3.2, z: -1.1, rotY: Math.PI, isSitting: true, role: 'visitor' }));
+
+        group.add(createErgonomicChair(4.8, -1.1, Math.PI, false));
+        group.add(createHumanFigure({ x: 4.8, z: -1.1, rotY: Math.PI, isSitting: true, role: 'visitor' }));
+
+      } else if (level === 2) {
+        // 1ST FLOOR: Citizen Response & Dispatch (ERSS 112/1930)
+        for (let r = 0; r < 3; r++) {
+          group.add(createWorkstation(-4.2, -3.2 + r * 1.8, Math.PI / 2, { screens: 2, screenGlow: furnitureMats.screenGlowRed, personRole: 'calltaker', hasHeadset: true }));
+          group.add(createWorkstation(-1.8, -3.2 + r * 1.8, -Math.PI / 2, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'calltaker', hasHeadset: true }));
+        }
+
+        group.add(createWorkstation(3.6, -3.2, 0, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'police', hasHeadset: true }));
+
+        const pfcCounter = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.72, 0.85), furnitureMats.woodDesk);
+        pfcCounter.position.set(3.8, 0.36, 2.4);
+        group.add(pfcCounter);
+
+        group.add(createErgonomicChair(2.6, 1.8, 0));
+        group.add(createHumanFigure({ x: 2.6, z: 1.8, rotY: 0, isSitting: true, role: 'police' }));
+
+        group.add(createErgonomicChair(5.0, 1.8, 0));
+        group.add(createHumanFigure({ x: 5.0, z: 1.8, rotY: 0, isSitting: true, role: 'analyst' }));
+
+        group.add(createErgonomicChair(2.6, 3.1, Math.PI));
+        group.add(createHumanFigure({ x: 2.6, z: 3.1, rotY: Math.PI, isSitting: true, role: 'visitor' }));
+
+        group.add(createErgonomicChair(5.0, 3.1, Math.PI));
+        group.add(createHumanFigure({ x: 5.0, z: 3.1, rotY: Math.PI, isSitting: true, role: 'visitor' }));
+
+      } else if (level === 3) {
+        // 2ND FLOOR: SCRB & Analytics Centre
+        group.add(createWorkstation(3.5, -2.8, 0, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'police' }));
+        group.add(createWorkstation(3.5, -0.8, 0, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+
+        const afisDesk = createWorkstation(-3.8, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowGreen, personRole: 'police' });
+        const scannerPad = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, 0.28), furnitureMats.screenGlowGreen);
+        scannerPad.position.set(0.35, 0.62, 0.1);
+        afisDesk.add(scannerPad);
+        group.add(afisDesk);
+
+        group.add(createWorkstation(3.8, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'analyst' }));
+
+        for (let c = 0; c < 3; c++) {
+          const cab = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.7, 1.8), furnitureMats.woodDesk);
+          cab.position.set(-4.0, 0.85, -2.8 + c * 1.1);
+          group.add(cab);
+        }
+
+      } else if (level === 4) {
+        // 3RD FLOOR: AI, Video Analytics & Predictive Policing
+        group.add(createWorkstation(-4.0, -2.6, 0, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+        group.add(createWorkstation(-1.6, -2.6, 0, { screens: 2, screenGlow: furnitureMats.screenGlowGreen, personRole: 'analyst' }));
+
+        group.add(createWorkstation(-3.8, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'police' }));
+        group.add(createConferenceSuite(3.2, 2.6, 3.4, 1.6, 8));
+
+      } else if (level === 5) {
+        // 4TH FLOOR: Cyber Threat Intelligence Centre (CTIC)
+        group.add(createWorkstation(4.0, -2.5, 0, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'police' }));
+        group.add(createWorkstation(4.0, -0.6, 0, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'analyst' }));
+
+        const darkBooth = new THREE.Mesh(
+          new THREE.BoxGeometry(3.0, FLOOR_H - 0.2, 2.8),
+          new THREE.MeshStandardMaterial({ color: 0x1e293b, wireframe: true })
+        );
+        darkBooth.position.set(-4.0, FLOOR_H / 2, -2.6);
+        group.add(darkBooth);
+        group.add(createWorkstation(-4.0, -2.6, 0, { screens: 2, screenGlow: furnitureMats.screenGlowRed, personRole: 'police' }));
+
+        group.add(createWorkstation(-4.0, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+        group.add(createWorkstation(-1.6, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+
+      } else if (level === 6) {
+        // 5TH FLOOR: Cyber Investigation & Operations Centre
+        group.add(createConferenceSuite(-3.6, 2.5, 3.2, 1.5, 6));
+        group.add(createWorkstation(4.0, 2.6, Math.PI, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'analyst' }));
+
+        const forenBench = createWorkstation(-4.0, -2.8, 0, { screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'police' });
+        const microscope = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.32, 8), furnitureMats.metalFrame);
+        microscope.position.set(0.3, 0.75, 0.05);
+        forenBench.add(microscope);
+        group.add(forenBench);
+
+        group.add(createWorkstation(4.0, -2.8, 0, { screens: 2, screenGlow: furnitureMats.screenGlowGreen, personRole: 'police' }));
+
+      } else if (level === 7) {
+        // 6TH FLOOR: Technology Operations Centre & Data Centre
+        for (let row = 0; row < 2; row++) {
+          for (let col = 0; col < 3; col++) {
+            group.add(createDetailedServerRack(-4.6 + col * 1.1, -3.2 + row * 1.5, 0));
+          }
+        }
+
+        group.add(createHumanFigure({ x: -2.8, y: 0, z: -2.4, rotY: -Math.PI / 2, isSitting: false, role: 'analyst' }));
+        group.add(createWorkstation(0, 2.6, Math.PI, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+        group.add(createWorkstation(2.4, 2.6, Math.PI, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowGreen, personRole: 'analyst' }));
+        group.add(createWorkstation(-2.4, 2.6, Math.PI, { width: 1.8, screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'police' }));
+        group.add(createWorkstation(4.2, -2.4, 0, { screens: 1, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+
+      } else if (level === 8) {
+        // 7TH FLOOR: S4C Administration Coordination Centre
+        const dirDesk = createWorkstation(3.8, 2.5, Math.PI, {
+          width: 2.2,
+          depth: 0.9,
+          screens: 2,
+          isExecutive: true,
+          personRole: 'executive',
+          screenGlow: furnitureMats.screenGlowAmber
+        });
+        group.add(createErgonomicChair(3.0, 1.4, 0, true));
+        group.add(createHumanFigure({ x: 3.0, z: 1.4, rotY: 0, isSitting: true, role: 'police' }));
+        group.add(createErgonomicChair(4.6, 1.4, 0, true));
+        group.add(createHumanFigure({ x: 4.6, z: 1.4, rotY: 0, isSitting: true, role: 'police' }));
+        group.add(dirDesk);
+
+        group.add(createWorkstation(3.8, -2.5, 0, { width: 2.0, screens: 2, isExecutive: true, personRole: 'police', screenGlow: furnitureMats.screenGlowCyan }));
+        group.add(createErgonomicChair(3.8, -1.4, Math.PI, true));
+        group.add(createHumanFigure({ x: 3.8, z: -1.4, rotY: Math.PI, isSitting: true, role: 'executive' }));
+
+        group.add(createWorkstation(-4.0, 2.5, Math.PI, { screens: 1, screenGlow: furnitureMats.screenGlowGreen, personRole: 'analyst' }));
+        group.add(createWorkstation(-4.0, -2.5, 0, { screens: 1, screenGlow: furnitureMats.screenGlowCyan, personRole: 'analyst' }));
+
+      } else if (level === 9) {
+        // 8TH FLOOR: Training, Research & Innovation Centre
+        for (let row = 0; row < 3; row++) {
+          const tRow = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.58, 0.65), furnitureMats.woodDesk);
+          tRow.position.set(3.5, 0.29, -3.2 + row * 1.5);
+          group.add(tRow);
+
+          [-1.3, 0, 1.3].forEach(sx => {
+            const lap = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 0.22), furnitureMats.screenBezel);
+            lap.position.set(3.5 + sx, 0.60, -3.2 + row * 1.5);
+            const lapScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.18), furnitureMats.screenGlowCyan);
+            lapScreen.position.set(3.5 + sx, 0.72, -3.2 + row * 1.5 - 0.1);
+            group.add(lap, lapScreen);
+            group.add(createErgonomicChair(3.5 + sx, -3.2 + row * 1.5 + 0.44, 0, false));
+
+            group.add(createHumanFigure({
+              x: 3.5 + sx,
+              z: -3.2 + row * 1.5 + 0.38,
+              rotY: 0,
+              isSitting: true,
+              role: row % 2 === 0 ? 'police' : 'analyst'
+            }));
+          });
+        }
+
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.0, 0.5), furnitureMats.executiveWood);
+        podium.position.set(3.5, 0.5, -4.6);
+        group.add(podium);
+        group.add(createHumanFigure({ x: 3.5, y: 0, z: -4.8, rotY: 0, isSitting: false, role: 'police' }));
+
+        group.add(createConferenceSuite(-3.6, 2.5, 3.6, 1.6, 10));
+        group.add(createWorkstation(-3.6, -2.5, 0, { screens: 2, screenGlow: furnitureMats.screenGlowAmber, personRole: 'analyst' }));
+      }
+
+      const markerData = (FLOORS_DATA[level] && FLOORS_DATA[level].markers) || [];
+      markerData.forEach((marker, index) => {
+        const rot = index % 2 === 0 ? 0 : Math.PI / 2;
+        group.add(createMarkerObjectByName(marker.name, marker.pos.x, marker.pos.z, rot));
+      });
+    }
+
+    function buildTerraceInfra() {
+      const topY = TOTAL_LEVELS * (FLOOR_H + 0.2) + 0.1;
+      roofGroup = new THREE.Group();
+      roofGroup.position.set(0, topY, 0);
+
+      const mast1 = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 3.0, 8), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+      mast1.position.set(-4, 1.5, -3.5);
+      const dish1 = new THREE.Mesh(new THREE.SphereGeometry(1.1, 16, 8, 0, Math.PI), new THREE.MeshStandardMaterial({ color: 0xf8fafc, side: THREE.DoubleSide }));
+      dish1.rotation.x = Math.PI / 3;
+      dish1.position.set(-4, 2.8, -3.5);
+      roofGroup.add(mast1, dish1);
+
+      const rfTower = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 5.0, 6), new THREE.MeshStandardMaterial({ color: 0xef4444 }));
+      rfTower.position.set(4, 2.5, -3.5);
+      roofGroup.add(rfTower);
+
+      scene.add(roofGroup);
+    }
+
+    function render3DBadges(markers) {
+      const container = document.getElementById('labels-container');
+      if (!container) return;
+      container.innerHTML = '';
+      createdLabelDoms = [];
+
+      if (!markers || markers.length === 0) return;
+
+      markers.forEach(marker => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'room-tag-3d badge-pop';
+
+        const bubble = document.createElement('div');
+        bubble.className = `room-tag-bubble ${marker.color || 'bg-slate-800 text-white'}`;
+        bubble.innerHTML = `<i class="fa-solid ${marker.icon || 'fa-location-dot'} text-[9px]"></i><span>${marker.name}</span>`;
+
+        const pin = document.createElement('div');
+        pin.className = 'room-tag-pin';
+
+        const dot = document.createElement('div');
+        dot.className = 'room-tag-dot';
+
+        wrapper.appendChild(bubble);
+        wrapper.appendChild(pin);
+        wrapper.appendChild(dot);
+        container.appendChild(wrapper);
+
+        createdLabelDoms.push({
+          dom: wrapper,
+          pos3D: new THREE.Vector3(marker.pos.x, marker.pos.y, marker.pos.z)
+        });
+      });
+    }
+
+    function updateProjectedLabels() {
+      const container = document.getElementById('canvas-container');
+      if (!container || createdLabelDoms.length === 0) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      createdLabelDoms.forEach(item => {
+        const v = item.pos3D.clone();
+        v.project(camera);
+
+        if (v.z > 1) {
+          item.dom.style.opacity = '0';
+          return;
+        }
+
+        const sx = (v.x * 0.5 + 0.5) * w;
+        const sy = (-(v.y * 0.5) + 0.5) * h;
+
+        item.dom.style.opacity = '1';
+        item.dom.style.left = `${sx}px`;
+        item.dom.style.top = `${sy}px`;
+      });
+    }
+
+    function setFloorStage(stageId) {
+      currentFloorId = stageId;
+      const data = FLOORS_DATA.find(f => f.id === stageId) || FLOORS_DATA[0];
+
+      // Update Nav Buttons
+      document.querySelectorAll('.stage-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+        btn.classList.add('text-slate-300');
+      });
+      const activeBtn = document.getElementById(`btn-${stageId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+        activeBtn.classList.remove('text-slate-300');
+      }
+
+      // Update Details Text
+      document.getElementById('floor-title').textContent = data.name;
+      document.getElementById('floor-subunits').textContent = data.subUnits;
+      const progressPct = (stageId / (FLOORS_DATA.length - 1)) * 100;
+      document.getElementById('construction-progress-bar').style.width = `${progressPct}%`;
+
+      // Update Top HUD Banner
+      const levelShortCode = stageId === 0 ? "B" : stageId === 1 ? "G" : stageId === 10 ? "ROOF" : `${stageId - 1}F`;
+      document.getElementById('floor-badge-number').textContent = levelShortCode;
+      
+      const splitName = data.name.split(':');
+      const floorHeaderTitle = splitName[0].trim();
+      const floorSubtitle = splitName.length > 1 ? splitName[1].trim() : data.name;
+
+      document.getElementById('floor-badge-level').textContent = `● ACTIVE FLOOR: ${floorHeaderTitle}`;
+      document.getElementById('floor-badge-name').textContent = floorSubtitle;
+
+      // Construction Visibility: Progressive building from BASEMENT upwards
+      floorGroups.forEach((group, idx) => {
+        if (stageId === 10) {
+          group.visible = true;
+          floorCeilings[idx].visible = true;
+        } else {
+          const isBuilt = idx <= stageId;
+          group.visible = isBuilt;
+
+          if (isBuilt) {
+            floorCeilings[idx].visible = (idx !== stageId);
+
+            if (!group.userData.hasAnimated) {
+              group.position.y = group.userData.defaultY + 2.0;
+              new TWEEN.Tween(group.position)
+                .to({ y: group.userData.defaultY }, 600)
+                .easing(TWEEN.Easing.Back.Out)
+                .start();
+              group.userData.hasAnimated = true;
+            }
+          } else {
+            group.userData.hasAnimated = false;
+          }
+        }
+      });
+
+      if (roofGroup) roofGroup.visible = (stageId === 10);
+
+      // Rotate Crane to actively point at construction
+      if (craneJib) {
+        new TWEEN.Tween(craneJib.rotation)
+          .to({ y: data.craneAngle }, 1200 / speed)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .start();
+      }
+
+      // Smooth Camera Glide
+      const transitionDuration = 1350 / speed;
+      new TWEEN.Tween(camera.position)
+        .to(data.cam, transitionDuration)
+        .easing(TWEEN.Easing.Quartic.InOut)
+        .start();
+
+      new TWEEN.Tween(controls.target)
+        .to(data.look, transitionDuration)
+        .easing(TWEEN.Easing.Quartic.InOut)
+        .start();
+
+      // Update Pie-chart style leader line text
+      updateLeaderLineContent(stageId, data);
+
+      // Render 3D In-Scene Room Badges
+      render3DBadges(data.markers);
+    }
+
+    function updateLeaderLineContent(stageId, data) {
+      const card = document.getElementById('leader-card');
+      const badge = document.getElementById('leader-level-badge');
+      const title = document.getElementById('leader-level-title');
+      const subtitle = document.getElementById('leader-unit-subtitle');
+
+      if (!card || !data) return;
+
+      const levelCode = stageId === 0 ? "B" : stageId === 1 ? "G" : stageId === 10 ? "ROOF" : `${stageId - 1}F`;
+      badge.textContent = levelCode;
+
+      const parts = data.name.split(':');
+      title.textContent = parts[0].trim();
+      subtitle.textContent = parts.length > 1 ? parts[1].trim() : data.name;
+
+      card.classList.remove('hidden');
+    }
+
+    function updateLeaderLine() {
+      if (currentFloorId > 10) return;
+
+      const container = document.getElementById('canvas-container');
+      if (!container) return;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      const activeGroup = (currentFloorId === 10 && roofGroup) ? roofGroup : floorGroups[currentFloorId];
+      if (!activeGroup) return;
+
+      const slabY = activeGroup.position.y + 0.15;
+      const anchor3D = new THREE.Vector3(-SLAB_W / 2 + 0.8, slabY, SLAB_L / 2 - 0.4);
+      anchor3D.project(camera);
+
+      const pathEl = document.getElementById('callout-leader-path');
+      const dotEl = document.getElementById('callout-anchor-dot');
+      const pulseEl = document.getElementById('callout-anchor-pulse');
+      const card = document.getElementById('leader-card');
+
+      if (anchor3D.z > 1) {
+        if (card) card.style.opacity = '0';
+        if (pathEl) pathEl.setAttribute('d', '');
+        if (dotEl) {
+          dotEl.setAttribute('r', '0');
+          dotEl.setAttribute('cx', '0');
+          dotEl.setAttribute('cy', '0');
+          dotEl.setAttribute('opacity', '0');
+        }
+        if (pulseEl) {
+          pulseEl.setAttribute('r', '0');
+          pulseEl.setAttribute('cx', '0');
+          pulseEl.setAttribute('cy', '0');
+          pulseEl.setAttribute('opacity', '0');
+        }
+        return;
+      }
+
+      // Point A: Anchor on Slab
+      const ax = (anchor3D.x * 0.5 + 0.5) * w;
+      const ay = (-(anchor3D.y * 0.5) + 0.5) * h;
+
+      if (dotEl) {
+        dotEl.setAttribute('r', '4.5');
+        dotEl.setAttribute('cx', ax);
+        dotEl.setAttribute('cy', ay);
+        dotEl.setAttribute('opacity', '1');
+      }
+      if (pulseEl) {
+        pulseEl.setAttribute('r', '8');
+        pulseEl.setAttribute('cx', ax);
+        pulseEl.setAttribute('cy', ay);
+        pulseEl.setAttribute('opacity', '0.75');
+      }
+
+      // Leader elbow & horizontal termination stay on one side for a stable, non-repeating callout
+      const goLeft = true;
+      const diagLengthX = -85;
+      const diagLengthY = -45;
+      const horizLength = -150;
+
+      // Elbow Point B & Terminus Point C
+      const bx = ax + diagLengthX;
+      const by = ay + diagLengthY;
+      const cx = bx + horizLength;
+      const cy = by;
+
+      if (pathEl) {
+        pathEl.setAttribute('d', `M ${ax} ${ay} L ${bx} ${by} L ${cx} ${cy}`);
+      }
+
+      if (card) {
+        card.style.opacity = '1';
+        card.style.transform = 'translate(-100%, -50%)';
+        card.style.left = `${cx - 8}px`;
+        card.style.top = `${cy}px`;
+      }
+
+      renderAllFloorLines(w, h);
+    }
+
+    function renderAllFloorLines(w, h) {
+      const group = document.getElementById('all-floors-lines-group');
+      if (!group) return;
+      group.innerHTML = '';
+
+      if (!showAllFloorLines) return;
+
+      floorGroups.forEach((fg, idx) => {
+        if (!fg.visible || idx === currentFloorId) return;
+
+        const slabY = fg.position.y + 0.15;
+        const p3d = new THREE.Vector3(-SLAB_W / 2 + 0.8, slabY, SLAB_L / 2 - 0.4);
+        p3d.project(camera);
+
+        if (p3d.z > 1) return;
+
+        const sx = (p3d.x * 0.5 + 0.5) * w;
+        const sy = (-(p3d.y * 0.5) + 0.5) * h;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        line.setAttribute('class', 'callout-line-secondary');
+        line.setAttribute('d', `M ${sx} ${sy} L ${sx - 45} ${sy - 20} L ${sx - 110} ${sy - 20}`);
+
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', sx);
+        dot.setAttribute('cy', sy);
+        dot.setAttribute('r', '3');
+        dot.setAttribute('fill', '#94a3b8');
+
+        group.appendChild(dot);
+        group.appendChild(line);
+      });
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const btn = document.getElementById('play-btn');
+      const playIcon = document.getElementById('play-icon');
+      const playText = document.getElementById('play-text');
+      const timerContainer = document.getElementById('tour-timer-container');
+      const countdownChip = document.getElementById('countdown-chip');
+
+      if (isPlaying) {
+        playIcon.className = "fa-solid fa-pause text-[10px]";
+        playText.textContent = "Pause";
+        btn.classList.replace('bg-amber-500', 'bg-cyan-400');
+        timerContainer.classList.remove('hidden');
+        countdownChip.classList.remove('hidden');
+
+        // Start from Basement if already at completion
+        if (currentFloorId === 10) {
+          setFloorStage(0);
+        }
+        startDwellTimer();
+      } else {
+        playIcon.className = "fa-solid fa-play text-[10px]";
+        playText.textContent = "Play Tour";
+        btn.classList.replace('bg-cyan-400', 'bg-amber-500');
+        timerContainer.classList.add('hidden');
+        countdownChip.classList.add('hidden');
+        clearTimeout(playTimer);
+        clearInterval(countdownInterval);
+      }
+    }
+
+    function startDwellTimer() {
+      clearTimeout(playTimer);
+      clearInterval(countdownInterval);
+
+      const adjustedDwell = DWELL_TIME_MS / speed;
+      dwellStart = Date.now();
+      const timerBar = document.getElementById('tour-timer-bar');
+      const countdownDisplay = document.getElementById('countdown-display');
+
+      if (timerBar) timerBar.style.width = '0%';
+
+      // 5.0s countdown ticker
+      countdownInterval = setInterval(() => {
+        if (!isPlaying) {
+          clearInterval(countdownInterval);
+          return;
+        }
+        const elapsed = Date.now() - dwellStart;
+        const progress = Math.min(1, elapsed / adjustedDwell);
+        if (timerBar) timerBar.style.width = `${progress * 100}%`;
+
+        const remainingSec = Math.max(0, (adjustedDwell - elapsed) / 1000).toFixed(1);
+        if (countdownDisplay) countdownDisplay.textContent = `${remainingSec}s`;
+
+        if (progress >= 1) {
+          clearInterval(countdownInterval);
+        }
+      }, 50);
+
+      // Glide to the next floor after 5 seconds
+      playTimer = setTimeout(() => {
+        if (isPlaying) {
+          let next = (currentFloorId + 1) % FLOORS_DATA.length;
+          setFloorStage(next);
+          startDwellTimer();
+        }
+      }, adjustedDwell);
+    }
+
+    function nextFloor() {
+      const nextIdx = (currentFloorId + 1) % FLOORS_DATA.length;
+      setFloorStage(nextIdx);
+      if (isPlaying) startDwellTimer();
+    }
+
+    function prevFloor() {
+      const prevIdx = (currentFloorId - 1 + FLOORS_DATA.length) % FLOORS_DATA.length;
+      setFloorStage(prevIdx);
+      if (isPlaying) startDwellTimer();
+    }
+
+    function toggleExplode() {
+      isExploded = !isExploded;
+      const btn = document.getElementById('explode-btn');
+      btn.classList.toggle('bg-cyan-500/20');
+      btn.classList.toggle('border-cyan-400');
+
+      const mult = isExploded ? 2.4 : 1.0;
+      floorGroups.forEach((group, idx) => {
+        const targetY = idx * (FLOOR_H * mult + 0.2) + 0.1;
+        new TWEEN.Tween(group.position)
+          .to({ y: targetY }, 900)
+          .easing(TWEEN.Easing.Back.Out)
+          .start();
+      });
+
+      if (isExploded) {
+        new TWEEN.Tween(camera.position)
+          .to({ x: 38, y: 44, z: 38 }, 900)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .start();
+      }
+    }
+
+    function toggleScaffolding() {
+      showScaffolding = !showScaffolding;
+      scaffoldGroups.forEach(sc => sc.visible = showScaffolding);
+      document.getElementById('scaffold-btn').classList.toggle('text-amber-400');
+      document.getElementById('scaffold-btn').classList.toggle('text-slate-400');
+    }
+
+    function toggleRotate() {
+      autoRotate = !autoRotate;
+      controls.autoRotate = autoRotate;
+      controls.autoRotateSpeed = 1.0;
+      document.getElementById('rotate-btn').classList.toggle('text-amber-400');
+    }
+
+    function cycleSpeed() {
+      if (speed === 1.0) speed = 1.5;
+      else if (speed === 1.5) speed = 2.0;
+      else speed = 1.0;
+      document.getElementById('speed-chip').textContent = `${speed.toFixed(1)}x`;
+    }
+
+    function resetView() {
+      setFloorStage(0);
+    }
+
+    function onResize() {
+      const c = document.getElementById('canvas-container');
+      camera.aspect = c.clientWidth / c.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(c.clientWidth, c.clientHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      TWEEN.update();
+      controls.update();
+
+      if (craneHook) {
+        craneHook.rotation.z = Math.sin(Date.now() * 0.0015) * 0.03;
+      }
+
+      if (isPlaying) {
+        controls.target.x += Math.sin(Date.now() * 0.001) * 0.0015;
+      }
+
+      renderer.render(scene, camera);
+      updateProjectedLabels();
+      updateLeaderLine();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
